@@ -3,7 +3,7 @@ import requests
 
 # Функция для получения курса валют
 def get_exchange_rate():
-    url = "https://api.exchangerate-api.com/v4/latest/RUB"  # API для получения курсов
+    url = "https://api.exchangerate-api.com/v4/latest/RUB"
     response = requests.get(url)
 
     # Проверка ответа API
@@ -12,16 +12,19 @@ def get_exchange_rate():
         return None, None
 
     data = response.json()
-    return data['rates']['USD'], data['rates']['RUB']  # Возвращаем курс доллара и рубля
+    return data['rates']['USD'], data['rates']['RUB']
 
 
 # Функция для конвертации рублей в доллары
 def convert_rub_to_usd(amount_rub):
-    exchange_rate, _ = get_exchange_rate()
-    if exchange_rate is None:
+    exchange_rate_usd, _ = get_exchange_rate()
+    if exchange_rate_usd is None:
         return None  # Если курс не удалось получить
-    amount_usd = amount_rub / exchange_rate
-    return amount_usd, exchange_rate
+
+    # Используем обратный курс доллара
+    inverse_exchange_rate = 1 / exchange_rate_usd
+    amount_usd = amount_rub * inverse_exchange_rate
+    return amount_usd, inverse_exchange_rate
 
 
 def main():
